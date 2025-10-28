@@ -2,47 +2,38 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
+     * The model does not use the default created_at/updated_at timestamps.
+     * The database table `usuarios` doesn't include those columns.
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    public $timestamps = false;
+
+    protected $table = 'usuarios';
+    protected $primaryKey = 'id_usuario';
+    protected $fillable = ['nombre', 'apellido', 'correo', 'contrasena', 'telefono', 'activo'];
+    protected $hidden = ['contrasena', 'remember_token'];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Override the password accessor for Laravel auth compatibility.
      *
-     * @var list<string>
+     * @return string
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function getAuthPassword()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->contrasena;
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Rol::class, 'usuario_rol', 'id_usuario', 'id_rol');
     }
 }
+
