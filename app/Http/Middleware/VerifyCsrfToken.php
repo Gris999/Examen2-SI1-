@@ -12,7 +12,6 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        // Exclude API routes so external clients (Postman) can call POST endpoints
-        'api/*',
+        // Mantén esta lista vacía para rutas web. Las rutas en routes/api.php no usan CSRF.
     ];
 }

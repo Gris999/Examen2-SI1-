@@ -2,15 +2,19 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-// Route for testing login page
-Route::get('/login-test', function () {
-    return view('auth.login');
-});
+// Rutas web únicamente. Las rutas API están en routes/api.php
 
-// Keep web routes here. Also register API prefixed routes but using the 'api' middleware
-Route::middleware('api')->prefix('api')->group(function () {
-	Route::post('/login', [AuthController::class, 'login']);
-	Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-	Route::post('/recuperar', [AuthController::class, 'recuperar']);
-	Route::post('/reset-password', [AuthController::class, 'reset']);
-});
+// Vistas de PRUEBA solo disponibles en entorno local
+if (app()->environment('local')) {
+    // Estas rutas exponen formularios simples para probar los endpoints
+    // ⚠️ Eliminar antes de subir a producción
+    Route::view('/login-test', 'login-test');
+    Route::view('/recuperar-test', 'recuperar-test');
+    Route::view('/reset-test', 'reset-test');
+}
+
+// Vista de restablecimiento usada por el enlace del correo
+// Puede mantenerse en cualquier entorno, pero es opcional si tu frontend ya maneja el flujo.
+Route::get('/reset-password', function () {
+    return view('auth.reset');
+})->name('password.reset');
