@@ -1,20 +1,73 @@
 <?php
-use App\Http\Controllers\AuthController;
+
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\DocenteController;
+use App\Http\Controllers\MateriaController;
+use App\Http\Controllers\GrupoController;
+use App\Http\Controllers\AulaController;
+use App\Http\Controllers\CargaHorariaController;
+use App\Http\Controllers\AprobacionController;
+use App\Http\Controllers\HorarioController;
+use Illuminate\Support\Facades\App;
 
-// Rutas web únicamente. Las rutas API están en routes/api.php
+// Autenticación
+Route::middleware('web')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.store');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Vistas de PRUEBA solo disponibles en entorno local
-if (app()->environment('local')) {
-    // Estas rutas exponen formularios simples para probar los endpoints
-    // ⚠️ Eliminar antes de subir a producción
-    Route::view('/login-test', 'login-test');
-    Route::view('/recuperar-test', 'recuperar-test');
-    Route::view('/reset-test', 'reset-test');
+    // Recuperación de contraseña (modo desarrollo: muestra link en pantalla)
+    Route::get('/password/forgot', [PasswordResetController::class, 'requestForm'])->name('password.request');
+    Route::post('/password/email', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
+    Route::get('/password/reset/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset.form');
+    Route::post('/password/reset', [PasswordResetController::class, 'reset'])->name('password.update');
+
+    // Dashboard protegido
+    Route::get('/', function () { return redirect()->route('dashboard'); });
+    Route::get('/dashboard', function () { return view('dashboard'); })->middleware('auth_simple')->name('dashboard');
+
+    // CU2: Gestionar Docentes
+    Route::middleware('auth_simple')->group(function () {
+        Route::resource('docentes', DocenteController::class)->except(['show']);
+        Route::resource('materias', MateriaController::class)->except(['show']);
+        Route::resource('grupos', GrupoController::class)->except(['show']);
+        Route::get('grupos/{grupo}/docentes', [GrupoController::class, 'docentes'])->name('grupos.docentes');
+        Route::post('grupos/{grupo}/docentes', [GrupoController::class, 'addDocente'])->name('grupos.docentes.add');
+        Route::delete('grupos/{grupo}/docentes/{dmg}', [GrupoController::class, 'removeDocente'])->name('grupos.docentes.remove');
+
+        // CU5: Gestionar Aulas
+        Route::resource('aulas', AulaController::class)->except(['show']);
+
+        // CU6: Asignar Carga Horaria (usa tabla 'horarios')
+        Route::resource('carga', CargaHorariaController::class)->parameters(['carga' => 'cargum'])->except(['show']);
+
+        // CU7: Aprobar / Rechazar Asignaciones
+        Route::get('aprobaciones', [AprobacionController::class, 'index'])->name('aprobaciones.index');
+        Route::post('aprobaciones/{dmg}/aprobar', [AprobacionController::class, 'approve'])->name('aprobaciones.approve');
+        Route::post('aprobaciones/{dmg}/rechazar', [AprobacionController::class, 'reject'])->name('aprobaciones.reject');
+
+        // CU8: Gestionar Horarios (manual básico)
+        Route::resource('horarios', HorarioController::class)->except(['show']);
+    });
+});
+
+// Ruta de siembra rápida para desarrollo local (crea un usuario demo)
+if (App::environment('local')) {
+    Route::get('/dev/seed-user', function () {
+        $usuarioModel = \App\Models\Usuario::class;
+        $exists = $usuarioModel::where('correo', 'admin@example.com')->exists();
+        if (!$exists) {
+            $usuarioModel::create([
+                'nombre' => 'Administrador',
+                'apellido' => 'Sistema',
+                'correo' => 'admin@example.com',
+                'contrasena' => 'secret123',
+                'telefono' => '70000000',
+                'activo' => true,
+            ]);
+        }
+        return 'Usuario de desarrollo listo (usuarios): admin@example.com / secret123';
+    });
 }
-
-// Vista de restablecimiento usada por el enlace del correo
-// Puede mantenerse en cualquier entorno, pero es opcional si tu frontend ya maneja el flujo.
-Route::get('/reset-password', function () {
-    return view('auth.reset');
-})->name('password.reset');

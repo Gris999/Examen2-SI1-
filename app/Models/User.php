@@ -2,38 +2,47 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Laravel\Sanctum\HasApiTokens;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory;
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable;
 
     /**
-     * The model does not use the default created_at/updated_at timestamps.
-     * The database table `usuarios` doesn't include those columns.
-     */
-    public $timestamps = false;
-
-    protected $table = 'usuarios';
-    protected $primaryKey = 'id_usuario';
-    protected $fillable = ['nombre', 'apellido', 'correo', 'contrasena', 'telefono', 'activo'];
-    protected $hidden = ['contrasena', 'remember_token'];
-
-    /**
-     * Override the password accessor for Laravel auth compatibility.
+     * The attributes that are mass assignable.
      *
-     * @return string
+     * @var list<string>
      */
-    public function getAuthPassword()
-    {
-        return $this->contrasena;
-    }
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
 
-    public function roles()
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
-        return $this->belongsToMany(Rol::class, 'usuario_rol', 'id_usuario', 'id_rol');
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 }
-
