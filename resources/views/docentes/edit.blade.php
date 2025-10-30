@@ -1,8 +1,13 @@
-@php($title = 'Editar Docente')
+@php($title = 'Docentes')
 @extends('layouts.app')
 
 @section('content')
-<h3 class="mb-3">Editar Docente</h3>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h4 class="mb-0">Editar Docente</h4>
+    <small class="text-muted">Actualiza la información del docente</small>
+  </div>
+</div>
 
 <form method="POST" action="{{ route('docentes.update', $docente) }}" class="row g-3">
   @csrf
@@ -12,7 +17,7 @@
     <input type="email" name="correo" value="{{ old('correo', $docente->usuario->correo ?? '') }}" class="form-control" required>
     <div class="form-text">Debe existir en la tabla usuarios y no estar asignado a otro docente.</div>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-6">
     <label class="form-label">Código Docente</label>
     <input type="text" name="codigo_docente" value="{{ old('codigo_docente', $docente->codigo_docente) }}" class="form-control">
   </div>
@@ -25,9 +30,8 @@
     <input type="text" name="grado_academico" value="{{ old('grado_academico', $docente->grado_academico) }}" class="form-control">
   </div>
   <div class="col-12 d-flex gap-2">
-    <button class="btn btn-primary" type="submit">Actualizar</button>
+    <button class="btn btn-primary" type="submit"><i class="bi bi-save me-1"></i>Actualizar</button>
     <a href="{{ route('docentes.index') }}" class="btn btn-outline-secondary">Cancelar</a>
   </div>
 </form>
 @endsection
-

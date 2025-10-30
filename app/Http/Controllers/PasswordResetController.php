@@ -43,8 +43,10 @@ class PasswordResetController extends Controller
 
         $devLink = route('password.reset.form', ['token' => $plainToken, 'email' => $user->correo]);
 
-        return back()->with('status', 'Se generó un enlace de recuperación (modo desarrollo).')
-            ->with('dev_link', $devLink);
+        return redirect()->route('password.sent')
+            ->with('status', 'Te enviamos un enlace para restablecer tu contraseña.')
+            ->with('dev_link', $devLink)
+            ->with('email', $user->correo);
     }
 
     public function showResetForm(Request $request, string $token)

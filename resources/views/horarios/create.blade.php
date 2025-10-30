@@ -1,8 +1,13 @@
-@php($title = 'Nuevo Horario')
+@php($title = 'Horarios')
 @extends('layouts.app')
 
 @section('content')
-<h3 class="mb-3">Nuevo Horario</h3>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h4 class="mb-0">Nuevo Horario</h4>
+    <small class="text-muted">Crea un horario para una asignación aprobada</small>
+  </div>
+</div>
 
 <form method="POST" action="{{ route('horarios.store') }}" class="row g-3">
   @csrf
@@ -12,7 +17,7 @@
       <option value="">Seleccione...</option>
       @foreach($docentes as $d)
         <option value="{{ $d->id_docente }}" @selected(old('id_docente')==$d->id_docente)>
-          {{ $d->usuario->nombre ?? '' }} {{ $d->usuario->apellido ?? '' }} — {{ $d->usuario->correo ?? '' }}
+          {{ $d->usuario->nombre ?? '' }} {{ $d->usuario->apellido ?? '' }} - {{ $d->usuario->correo ?? '' }}
         </option>
       @endforeach
     </select>
@@ -23,7 +28,7 @@
       <option value="">Seleccione...</option>
       @foreach($grupos as $g)
         <option value="{{ $g->id_grupo }}" @selected(old('id_grupo')==$g->id_grupo)>
-          {{ $g->materia->nombre ?? '' }} @if($g->materia?->codigo) ({{ $g->materia->codigo }}) @endif — {{ $g->gestion->codigo ?? '' }} — Grupo {{ $g->nombre_grupo }}
+          {{ $g->materia->nombre ?? '' }} @if($g->materia?->codigo) ({{ $g->materia->codigo }}) @endif - {{ $g->gestion->codigo ?? '' }} - Grupo {{ $g->nombre_grupo }}
         </option>
       @endforeach
     </select>
@@ -77,7 +82,7 @@
     <textarea name="observacion" class="form-control" rows="2">{{ old('observacion') }}</textarea>
   </div>
   <div class="col-12 d-flex gap-2">
-    <button class="btn btn-primary" type="submit">Guardar</button>
+    <button class="btn btn-teal" type="submit">Guardar</button>
     <a href="{{ route('horarios.index') }}" class="btn btn-outline-secondary">Cancelar</a>
   </div>
 </form>

@@ -1,53 +1,59 @@
-@php($title = 'Aprobaciones de Asignaciones')
+@php($title = 'Aprobaciones')
 @extends('layouts.app')
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h3 class="mb-0">Aprobaciones de Asignaciones (Docente–Materia–Gestión)</h3>
+  <div>
+    <h4 class="mb-0">Aprobaciones de Asignaciones (DMG)</h4>
+    <small class="text-muted">Aprueba o rechaza asignaciones pendientes</small>
+  </div>
   <a href="{{ route('grupos.index') }}" class="btn btn-outline-secondary">Asignar (CU6)</a>
 </div>
 
-<form method="GET" class="row g-2 mb-3">
-  <div class="col-md-3">
-    <select name="estado" class="form-select" onchange="this.form.submit()">
-      @foreach(['PENDIENTE','APROBADA','RECHAZADA'] as $e)
-        <option value="{{ $e }}" @selected(($estado ?? 'PENDIENTE')===$e)>{{ ucfirst(strtolower($e)) }}</option>
-      @endforeach
-    </select>
+<div class="card shadow-sm border-0 mb-3">
+  <div class="card-body">
+    <form method="GET" class="row g-2 align-items-center m-0">
+      <div class="col-md-3">
+        <select name="estado" class="form-select">
+          @foreach(['PENDIENTE','APROBADA','RECHAZADA'] as $e)
+            <option value="{{ $e }}" @selected(($estado ?? 'PENDIENTE')===$e)>{{ ucfirst(strtolower($e)) }}</option>
+          @endforeach
+        </select>
+      </div>
+      <div class="col-md-2 d-grid">
+        <button class="btn btn-teal" type="submit">Filtrar</button>
+      </div>
+    </form>
   </div>
-  <div class="col-md-2">
-    <button class="btn btn-outline-secondary w-100" type="submit">Filtrar</button>
-  </div>
-</form>
+</div>
 
 @if (($asignaciones->count() ?? 0) === 0)
   <div class="alert alert-info">No hay registros para mostrar.</div>
 @else
   <div class="table-responsive">
-    <table class="table table-striped align-middle">
-      <thead>
+    <table class="table align-middle">
+      <thead class="table-light">
         <tr>
-          <th>#</th>
+          <th style="width:60px">#</th>
           <th>Docente</th>
           <th>Materia / Gestión</th>
           <th>Horarios</th>
           <th>Estado</th>
-          <th class="text-end">Acciones</th>
+          <th class="text-end" style="width:220px">Acciones</th>
         </tr>
       </thead>
       <tbody>
         @foreach($asignaciones as $a)
           <tr>
-            <td>{{ $a->id_docente_materia_gestion }}</td>
+            <td>{{ $asignaciones->firstItem() + $loop->index }}</td>
             <td>{{ $a->docente->usuario->nombre ?? '' }} {{ $a->docente->usuario->apellido ?? '' }}</td>
             <td>
-              {{ $a->materia->nombre ?? '' }}
-              @if($a->materia?->codigo) ({{ $a->materia->codigo }}) @endif
-              — {{ $a->gestion->codigo ?? '' }}
+              <div class="fw-semibold text-uppercase">{{ $a->materia->nombre ?? '' }}</div>
+              <div class="text-muted small">{{ $a->gestion->codigo ?? '' }}</div>
             </td>
             <td>{{ $a->horarios_count }}</td>
             <td>
-              @php($cls = $a->estado === 'APROBADA' ? 'success' : ($a->estado === 'RECHAZADA' ? 'danger' : 'warning text-dark'))
+              @php($cls = ($a->estado ?? 'PENDIENTE') === 'APROBADA' ? 'success' : (($a->estado ?? 'PENDIENTE') === 'RECHAZADA' ? 'danger' : 'warning text-dark'))
               <span class="badge bg-{{ $cls }}">{{ ucfirst(strtolower($a->estado ?? 'PENDIENTE')) }}</span>
             </td>
             <td class="text-end">
@@ -61,7 +67,7 @@
                   <button class="btn btn-sm btn-outline-danger">Rechazar</button>
                 </form>
               @else
-                <span class="text-muted">—</span>
+                <span class="text-muted">-</span>
               @endif
             </td>
           </tr>
@@ -69,6 +75,7 @@
       </tbody>
     </table>
   </div>
-  <div>{{ $asignaciones->links() }}</div>
+  <div>{{ $asignaciones->links('vendor.pagination.teal') }}</div>
 @endif
 @endsection
+

@@ -1,8 +1,13 @@
-@php($title = 'Editar Grupo')
+@php($title = 'Grupos')
 @extends('layouts.app')
 
 @section('content')
-<h3 class="mb-3">Editar Grupo</h3>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h4 class="mb-0">Editar Grupo</h4>
+    <small class="text-muted">Actualiza los datos del grupo seleccionado</small>
+  </div>
+</div>
 
 <form method="POST" action="{{ route('grupos.update', $grupo) }}" class="row g-3">
   @csrf
@@ -38,7 +43,7 @@
     <input type="number" name="cupo" value="{{ old('cupo', $grupo->cupo) }}" class="form-control" min="1">
   </div>
   <div class="col-12 d-flex gap-2">
-    <button class="btn btn-primary" type="submit">Actualizar</button>
+    <button class="btn btn-teal" type="submit"><i class="bi bi-save me-1"></i>Actualizar</button>
     <a href="{{ route('grupos.index') }}" class="btn btn-outline-secondary">Cancelar</a>
   </div>
 </form>

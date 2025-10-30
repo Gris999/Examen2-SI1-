@@ -1,36 +1,37 @@
 @php($title = 'Iniciar sesión')
-@extends('layouts.app')
+@extends('layouts.auth')
 
 @section('content')
-<div class="row justify-content-center">
-  <div class="col-md-5">
-    <div class="card shadow-sm">
-      <div class="card-header">Iniciar sesión</div>
-      <div class="card-body">
-        <form method="POST" action="{{ route('login.store') }}">
-          @csrf
-          <div class="mb-3">
-            <label class="form-label">Correo</label>
-            <input type="email" name="login" value="{{ old('login') }}" class="form-control" required autofocus>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Contraseña</label>
-            <input type="password" name="password" class="form-control" required>
-          </div>
-          <div class="d-flex justify-content-between align-items-center">
-            <button class="btn btn-primary" type="submit">Entrar</button>
-            <a href="{{ route('password.request') }}">¿Olvidaste tu contraseña?</a>
-          </div>
-        </form>
+<div class="card card-auth p-4">
+  <div class="text-center mb-3">
+    <h5 class="fw-semibold mb-1">¡Bienvenido!</h5>
+    <small class="text-muted">{{ $contextTitle ?? 'Inicia sesión para continuar' }}</small>
+  </div>
+
+  <form method="POST" action="{{ route('login.store') }}" class="mt-2">
+    @csrf
+    <div class="mb-3">
+      <label class="form-label">Correo electrónico</label>
+      <div class="input-group">
+        <span class="input-group-text">📧</span>
+        <input type="email" name="login" value="{{ old('login') }}" class="form-control" placeholder="tu.correo@institucion.edu" required autofocus>
       </div>
     </div>
-  </div>
-  @if (app()->environment('local') && Route::has('password.request'))
-  <div class="col-md-5 mt-3">
-    <div class="alert alert-info">
-      <div><b>Modo desarrollo:</b> puedes crear un usuario de prueba visitando <code>/dev/seed-user</code>.</div>
+    <div class="mb-3">
+      <label class="form-label">Contraseña</label>
+      <div class="input-group">
+        <span class="input-group-text">🔒</span>
+        <input type="password" name="password" class="form-control" required>
+      </div>
     </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <a href="{{ route('password.request') }}" class="link-muted">¿Olvidaste tu contraseña?</a>
+    </div>
+    <button class="btn btn-teal w-100" type="submit">Iniciar Sesión</button>
+  </form>
+
+  <div class="text-center mt-3">
+    <a href="{{ route('login.select') }}" class="link-muted">← Volver</a>
   </div>
-  @endif
 </div>
 @endsection

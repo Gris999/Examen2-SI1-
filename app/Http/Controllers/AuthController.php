@@ -10,12 +10,33 @@ use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
         if (Auth::check()) {
             return redirect()->route('dashboard');
         }
-        return view('auth.login');
+        $perfil = $request->query('perfil'); // 'usuario' | 'docente'
+        $rol = $request->query('rol');       // 'decano' | 'administrador' | 'director'
+
+        $contextTitle = 'Iniciar sesión';
+        if ($perfil === 'docente') {
+            $contextTitle = 'Iniciar sesión como Docente';
+        } elseif ($perfil === 'usuario') {
+            $map = [
+                'decano' => 'Decano',
+                'administrador' => 'Administrador',
+                'director' => 'Director de Carrera',
+            ];
+            if ($rol && isset($map[$rol])) {
+                $contextTitle = 'Iniciar sesión como '.$map[$rol];
+            } else {
+                $contextTitle = 'Iniciar sesión como Usuario';
+            }
+        }
+
+        return view('auth.login', [
+            'contextTitle' => $contextTitle,
+        ]);
     }
 
     public function login(Request $request)
@@ -83,4 +104,3 @@ class AuthController extends Controller
         return redirect()->route('login')->with('status', 'Sesión cerrada.');
     }
 }
-

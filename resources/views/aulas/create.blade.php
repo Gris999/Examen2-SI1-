@@ -1,8 +1,13 @@
-@php($title = 'Nueva Aula')
+@php($title = 'Aulas')
 @extends('layouts.app')
 
 @section('content')
-<h3 class="mb-3">Nueva Aula</h3>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h4 class="mb-0">Nueva Aula</h4>
+    <small class="text-muted">Registra un espacio físico o virtual</small>
+  </div>
+</div>
 
 <form method="POST" action="{{ route('aulas.store') }}" class="row g-3">
   @csrf
@@ -19,7 +24,7 @@
     <select name="tipo" class="form-select">
       <option value="">Sin especificar</option>
       @foreach($tipos as $t)
-        <option value="{{ $t }}" @selected(old('tipo')===$t)>{{ $t }}</option>
+        <option value="{{ $t }}" @selected(old('tipo')===$t)>{{ ucfirst(mb_strtolower($t)) }}</option>
       @endforeach
     </select>
   </div>
@@ -32,7 +37,7 @@
     <input type="text" name="ubicacion" value="{{ old('ubicacion') }}" class="form-control">
   </div>
   <div class="col-12 d-flex gap-2">
-    <button class="btn btn-primary" type="submit">Guardar</button>
+    <button class="btn btn-teal" type="submit"><i class="bi bi-check2 me-1"></i>Guardar</button>
     <a href="{{ route('aulas.index') }}" class="btn btn-outline-secondary">Cancelar</a>
   </div>
 </form>

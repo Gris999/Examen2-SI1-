@@ -3,51 +3,69 @@
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h3 class="mb-0">Aulas</h3>
-  <a href="{{ route('aulas.create') }}" class="btn btn-primary">Nueva Aula</a>
+  <div>
+    <h4 class="mb-0">Aulas</h4>
+    <small class="text-muted">Gestiona los espacios físicos y virtuales</small>
+  </div>
 </div>
 
-<form method="GET" class="row g-2 mb-3">
-  <div class="col-md-4">
-    <input type="text" name="q" value="{{ $q }}" class="form-control" placeholder="Buscar por código, nombre, tipo o ubicación...">
+<!-- Botón de creación visible solo en pantallas pequeñas -->
+<div class="d-lg-none mb-2">
+  <a href="{{ route('aulas.create') }}" class="btn btn-teal w-100"><i class="bi bi-plus-lg me-1"></i>Nueva Aula</a>
+</div>
+
+<div class="card shadow-sm border-0 mb-3">
+  <div class="card-body">
+    <form method="GET" class="row g-2 align-items-center m-0">
+      <div class="col-lg-6">
+        <div class="input-group">
+          <span class="input-group-text rounded-start-pill"><i class="bi bi-search"></i></span>
+          <input type="text" name="q" value="{{ $q }}" class="form-control rounded-end-pill" placeholder="Buscar por código, nombre, tipo o ubicación...">
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <select name="tipo" class="form-select">
+          <option value="">Todos los tipos</option>
+          @foreach($tipos as $t)
+            <option value="{{ $t }}" @selected($tipo===$t)>{{ ucfirst(mb_strtolower($t)) }}</option>
+          @endforeach
+        </select>
+      </div>
+      <div class="col-lg-2 d-grid">
+        <button class="btn btn-teal" type="submit">Filtrar</button>
+      </div>
+    </form>
   </div>
-  <div class="col-md-3">
-    <select name="tipo" class="form-select" onchange="this.form.submit()">
-      <option value="">Todos los tipos</option>
-      @foreach($tipos as $t)
-        <option value="{{ $t }}" @selected($tipo===$t)>{{ $t }}</option>
-      @endforeach
-    </select>
-  </div>
-  <div class="col-md-2">
-    <button class="btn btn-outline-secondary w-100" type="submit">Filtrar</button>
-  </div>
-</form>
+</div>
 
 @if ($aulas->count() === 0)
   <div class="alert alert-info">No hay aulas registradas.</div>
 @else
   <div class="table-responsive">
-    <table class="table table-striped align-middle">
-      <thead>
+    <table class="table align-middle">
+      <thead class="table-light">
         <tr>
-          <th>#</th>
-          <th>Código</th>
+          <th style="width:60px">#</th>
+          <th style="width:140px">Código</th>
           <th>Nombre</th>
-          <th>Tipo</th>
-          <th>Capacidad</th>
+          <th style="width:140px">Tipo</th>
+          <th style="width:140px">Capacidad</th>
           <th>Ubicación</th>
-          <th>Estado</th>
-          <th class="text-end">Acciones</th>
+          <th style="width:120px">Estado</th>
+          <th class="text-end" style="width:160px">Acciones</th>
         </tr>
       </thead>
       <tbody>
         @foreach ($aulas as $a)
         <tr>
-          <td>{{ $a->id_aula }}</td>
+          <td>{{ $aulas->firstItem() + $loop->index }}</td>
           <td>{{ $a->codigo }}</td>
           <td>{{ $a->nombre }}</td>
-          <td>{{ $a->tipo }}</td>
+          <td>
+            @if($a->tipo)
+              <span class="badge bg-light border text-muted">{{ $a->tipo }}</span>
+            @endif
+          </td>
           <td>{{ $a->capacidad }}</td>
           <td>{{ $a->ubicacion }}</td>
           <td>
@@ -71,7 +89,7 @@
     </table>
   </div>
   <div>
-    {{ $aulas->links() }}
+    {{ $aulas->links('vendor.pagination.teal') }}
   </div>
 @endif
 @endsection

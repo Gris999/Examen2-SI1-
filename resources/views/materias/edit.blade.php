@@ -1,8 +1,13 @@
-@php($title = 'Editar Materia')
+@php($title = 'Materias')
 @extends('layouts.app')
 
 @section('content')
-<h3 class="mb-3">Editar Materia</h3>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h4 class="mb-0">Editar Materia</h4>
+    <small class="text-muted">Actualiza los datos de la asignatura</small>
+  </div>
+</div>
 
 <form method="POST" action="{{ route('materias.update', $materia) }}" class="row g-3">
   @csrf
@@ -10,7 +15,7 @@
   <div class="col-md-6">
     <label class="form-label">Carrera</label>
     <select name="id_carrera" class="form-select" required>
-      <option value="">Seleccione...</option>
+      <option value="">Selecciona...</option>
       @foreach($carreras as $c)
         <option value="{{ $c->id_carrera }}" @selected(old('id_carrera', $materia->id_carrera)==$c->id_carrera)>
           {{ $c->nombre }} @if($c->sigla) ({{ $c->sigla }}) @endif
@@ -35,7 +40,7 @@
     <textarea name="descripcion" class="form-control" rows="3">{{ old('descripcion', $materia->descripcion) }}</textarea>
   </div>
   <div class="col-12 d-flex gap-2">
-    <button class="btn btn-primary" type="submit">Actualizar</button>
+    <button class="btn btn-primary" type="submit"><i class="bi bi-save me-1"></i>Actualizar</button>
     <a href="{{ route('materias.index') }}" class="btn btn-outline-secondary">Cancelar</a>
   </div>
 </form>

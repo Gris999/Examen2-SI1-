@@ -3,51 +3,101 @@
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h3 class="mb-0">Docentes</h3>
-  <a href="{{ route('docentes.create') }}" class="btn btn-primary">Nuevo Docente</a>
+  <div>
+    <h4 class="mb-0">Docentes</h4>
+    <small class="text-muted">Gestiona el personal docente de la institución</small>
   </div>
+</div>
 
-<form method="GET" class="row g-2 mb-3">
-  <div class="col-md-6">
-    <input type="text" name="q" value="{{ $q }}" class="form-control" placeholder="Buscar por nombre, correo, código, profesión...">
+<!-- Botón de creación visible solo en pantallas pequeñas -->
+<div class="d-lg-none mb-2">
+  <a href="{{ route('docentes.create') }}" class="btn btn-teal w-100"><i class="bi bi-plus-lg me-1"></i>Nuevo Docente</a>
+</div>
+
+<div class="card shadow-sm border-0 mb-3">
+  <div class="card-body">
+    <form method="GET" class="row g-2 align-items-center m-0">
+      <div class="col-lg-8">
+        <div class="input-group">
+          <span class="input-group-text rounded-start-pill"><i class="bi bi-search"></i></span>
+          <input type="text" name="q" value="{{ $q }}" class="form-control rounded-end-pill" placeholder="Buscar por nombre, correo, código, profesión...">
+        </div>
+      </div>
+      <div class="col-lg-2 col-6">
+        <button class="btn btn-teal w-100" type="submit"><i class="bi bi-search me-1"></i>Buscar</button>
+      </div>
+      <div class="col-lg-2 col-6">
+        <a href="{{ route('docentes.index') }}" class="btn btn-outline-secondary w-100"><i class="bi bi-x-circle me-1"></i>Limpiar</a>
+      </div>
+    </form>
   </div>
-  <div class="col-md-2">
-    <button class="btn btn-outline-secondary w-100" type="submit">Buscar</button>
   </div>
-</form>
 
 @if ($docentes->count() === 0)
   <div class="alert alert-info">No hay docentes registrados.</div>
 @else
   <div class="table-responsive">
-    <table class="table table-striped align-middle">
-      <thead>
+    <table class="table align-middle">
+      <thead class="table-light">
         <tr>
-          <th>#</th>
+          <th style="width:60px">#</th>
           <th>Nombre</th>
           <th>Correo</th>
-          <th>Código</th>
+          <th style="width:120px">Código</th>
           <th>Profesión</th>
-          <th>Grado Académico</th>
-          <th class="text-end">Acciones</th>
+          <th style="width:160px">Grado Académico</th>
+          <th class="text-end" style="width:160px">Acciones</th>
         </tr>
       </thead>
       <tbody>
         @foreach ($docentes as $d)
         <tr>
-          <td>{{ $d->id_docente }}</td>
-          <td>{{ $d->usuario->nombre ?? '' }} {{ $d->usuario->apellido ?? '' }}</td>
-          <td>{{ $d->usuario->correo ?? '' }}</td>
-          <td>{{ $d->codigo_docente }}</td>
+          <td>{{ $docentes->firstItem() + $loop->index }}</td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="rounded-circle d-inline-flex justify-content-center align-items-center" style="width:32px;height:32px;background:#0f766e;color:#fff;font-weight:600;">
+                {{ strtoupper(substr($d->usuario->nombre ?? $d->usuario->correo,0,1)) }}
+              </div>
+              <div>
+                <div class="fw-semibold">{{ $d->usuario->nombre ?? '' }} {{ $d->usuario->apellido ?? '' }}</div>
+              </div>
+            </div>
+          </td>
+          <td class="text-muted"><i class="bi bi-envelope-open me-1"></i>{{ $d->usuario->correo ?? '' }}</td>
+          <td>
+            @if($d->codigo_docente)
+              <span class="badge bg-light border text-muted">{{ $d->codigo_docente }}</span>
+            @endif
+          </td>
           <td>{{ $d->profesion }}</td>
-          <td>{{ $d->grado_academico }}</td>
+          <td>
+            @if($d->grado_academico)
+              <span class="badge bg-light border text-success">{{ $d->grado_academico }}</span>
+            @endif
+          </td>
           <td class="text-end">
-            <a href="{{ route('docentes.edit', $d) }}" class="btn btn-sm btn-outline-primary">Editar</a>
-            <form action="{{ route('docentes.destroy', $d) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Eliminar este docente?');">
-              @csrf
-              @method('DELETE')
-              <button class="btn btn-sm btn-outline-danger">Eliminar</button>
-            </form>
+            <div class="dropdown">
+              <button class="btn btn-light border dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots"></i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="{{ route('docentes.edit', $d) }}">
+                    <i class="bi bi-pencil-square me-2"></i>Editar
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <form action="{{ route('docentes.destroy', $d) }}" method="POST" onsubmit="return confirm('¿Eliminar este docente?');">
+                    @csrf
+                    @method('DELETE')
+                    <button class="dropdown-item text-danger" type="submit">
+                      <i class="bi bi-trash me-2"></i>Eliminar
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </div>
           </td>
         </tr>
         @endforeach
@@ -55,8 +105,7 @@
     </table>
   </div>
   <div>
-    {{ $docentes->links() }}
+    {{ $docentes->links('vendor.pagination.teal') }}
   </div>
 @endif
 @endsection
-

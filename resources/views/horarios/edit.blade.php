@@ -1,8 +1,13 @@
-@php($title = 'Editar Horario')
+@php($title = 'Horarios')
 @extends('layouts.app')
 
 @section('content')
-<h3 class="mb-3">Editar Horario</h3>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h4 class="mb-0">Editar Horario</h4>
+    <small class="text-muted">Actualiza datos del horario</small>
+  </div>
+</div>
 
 <form method="POST" action="{{ route('horarios.update', $horario) }}" class="row g-3">
   @csrf
@@ -12,7 +17,7 @@
     <select name="id_docente" class="form-select" required>
       @foreach($docentes as $d)
         <option value="{{ $d->id_docente }}" @selected(old('id_docente', $horario->docenteMateriaGestion->docente->id_docente ?? null)==$d->id_docente)>
-          {{ $d->usuario->nombre ?? '' }} {{ $d->usuario->apellido ?? '' }} — {{ $d->usuario->correo ?? '' }}
+          {{ $d->usuario->nombre ?? '' }} {{ $d->usuario->apellido ?? '' }} - {{ $d->usuario->correo ?? '' }}
         </option>
       @endforeach
     </select>
@@ -22,7 +27,7 @@
     <select name="id_grupo" class="form-select" required>
       @foreach($grupos as $g)
         <option value="{{ $g->id_grupo }}" @selected(old('id_grupo', $horario->id_grupo)==$g->id_grupo)>
-          {{ $g->materia->nombre ?? '' }} @if($g->materia?->codigo) ({{ $g->materia->codigo }}) @endif — {{ $g->gestion->codigo ?? '' }} — Grupo {{ $g->nombre_grupo }}
+          {{ $g->materia->nombre ?? '' }} @if($g->materia?->codigo) ({{ $g->materia->codigo }}) @endif - {{ $g->gestion->codigo ?? '' }} - Grupo {{ $g->nombre_grupo }}
         </option>
       @endforeach
     </select>
@@ -75,7 +80,7 @@
     <textarea name="observacion" class="form-control" rows="2">{{ old('observacion', $horario->observacion) }}</textarea>
   </div>
   <div class="col-12 d-flex gap-2">
-    <button class="btn btn-primary" type="submit">Actualizar</button>
+    <button class="btn btn-teal" type="submit">Actualizar</button>
     <a href="{{ route('horarios.index') }}" class="btn btn-outline-secondary">Cancelar</a>
   </div>
 </form>

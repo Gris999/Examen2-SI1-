@@ -1,8 +1,13 @@
-@php($title = 'Nuevo Grupo')
+@php($title = 'Grupos')
 @extends('layouts.app')
 
 @section('content')
-<h3 class="mb-3">Nuevo Grupo</h3>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h4 class="mb-0">Nuevo Grupo</h4>
+    <small class="text-muted">Crea un grupo asociado a una materia y gestión</small>
+  </div>
+</div>
 
 <form method="POST" action="{{ route('grupos.store') }}" class="row g-3">
   @csrf
@@ -27,7 +32,7 @@
         </option>
       @endforeach
     </select>
-    <div class="form-text">Puedes filtrar por facultad/carrera usando el listado general.</div>
+    <div class="form-text">Para buscar por facultad/carrera usa los filtros del listado.</div>
   </div>
   <div class="col-md-2">
     <label class="form-label">Nombre Grupo</label>
@@ -38,7 +43,7 @@
     <input type="number" name="cupo" value="{{ old('cupo') }}" class="form-control" min="1">
   </div>
   <div class="col-12 d-flex gap-2">
-    <button class="btn btn-primary" type="submit">Guardar</button>
+    <button class="btn btn-teal" type="submit"><i class="bi bi-check2 me-1"></i>Guardar</button>
     <a href="{{ route('grupos.index') }}" class="btn btn-outline-secondary">Cancelar</a>
   </div>
 </form>

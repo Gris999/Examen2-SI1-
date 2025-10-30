@@ -50,4 +50,9 @@ class Usuario extends Authenticatable
     {
         return $this->hasOne(Docente::class, 'id_usuario', 'id_usuario');
     }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Rol::class, 'usuario_rol', 'id_usuario', 'id_rol');
+    }
 }

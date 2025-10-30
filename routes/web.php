@@ -10,23 +10,27 @@ use App\Http\Controllers\AulaController;
 use App\Http\Controllers\CargaHorariaController;
 use App\Http\Controllers\AprobacionController;
 use App\Http\Controllers\HorarioController;
+use App\Http\Controllers\AsistenciaController;
 use Illuminate\Support\Facades\App;
 
 // Autenticación
 Route::middleware('web')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::get('/login/select', function () { return view('auth.select-profile'); })->name('login.select');
+    Route::get('/login/usuario', function () { return view('auth.select-usuario-rol'); })->name('login.select.usuario');
     Route::post('/login', [AuthController::class, 'login'])->name('login.store');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Recuperación de contraseña (modo desarrollo: muestra link en pantalla)
     Route::get('/password/forgot', [PasswordResetController::class, 'requestForm'])->name('password.request');
     Route::post('/password/email', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
+    Route::get('/password/sent', function () { return view('auth.passwords.sent'); })->name('password.sent');
     Route::get('/password/reset/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset.form');
     Route::post('/password/reset', [PasswordResetController::class, 'reset'])->name('password.update');
 
     // Dashboard protegido
     Route::get('/', function () { return redirect()->route('dashboard'); });
-    Route::get('/dashboard', function () { return view('dashboard'); })->middleware('auth_simple')->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->middleware('auth_simple')->name('dashboard');
 
     // CU2: Gestionar Docentes
     Route::middleware('auth_simple')->group(function () {
@@ -50,6 +54,12 @@ Route::middleware('web')->group(function () {
 
         // CU8: Gestionar Horarios (manual básico)
         Route::resource('horarios', HorarioController::class)->except(['show']);
+
+        // CU10: Registrar Asistencia Docente
+        Route::resource('asistencias', AsistenciaController::class)->except(['show']);
+        Route::get('asistencias/qr/{horario}', [AsistenciaController::class, 'qr'])->name('asistencias.qr');
+        Route::get('asistencias/qr-register', [AsistenciaController::class, 'qrRegister'])
+            ->name('asistencias.qr.register'); // ruta firmada
     });
 });
 
