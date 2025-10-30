@@ -16,20 +16,20 @@ use Illuminate\Support\Facades\App;
 // Autenticación
 Route::middleware('web')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::get('/login/select', function () { return view('auth.select-profile'); })->name('login.select');
-    Route::get('/login/usuario', function () { return view('auth.select-usuario-rol'); })->name('login.select.usuario');
+    Route::view('/login/select', 'auth.select-profile')->name('login.select');
+    Route::view('/login/usuario', 'auth.select-usuario-rol')->name('login.select.usuario');
     Route::post('/login', [AuthController::class, 'login'])->name('login.store');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Recuperación de contraseña (modo desarrollo: muestra link en pantalla)
     Route::get('/password/forgot', [PasswordResetController::class, 'requestForm'])->name('password.request');
     Route::post('/password/email', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
-    Route::get('/password/sent', function () { return view('auth.passwords.sent'); })->name('password.sent');
+    Route::view('/password/sent', 'auth.passwords.sent')->name('password.sent');
     Route::get('/password/reset/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset.form');
     Route::post('/password/reset', [PasswordResetController::class, 'reset'])->name('password.update');
 
     // Dashboard protegido
-    Route::get('/', function () { return redirect()->route('dashboard'); });
+    Route::redirect('/', '/dashboard');
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->middleware('auth_simple')->name('dashboard');
 
     // CU2: Gestionar Docentes
