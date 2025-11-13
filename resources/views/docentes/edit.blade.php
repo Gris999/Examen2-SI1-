@@ -13,9 +13,16 @@
   @csrf
   @method('PUT')
   <div class="col-md-6">
-    <label class="form-label">Correo del Usuario</label>
+    <label class="form-label">Nombre</label>
+    <input type="text" name="nombre" value="{{ old('nombre', $docente->usuario->nombre ?? '') }}" class="form-control" required>
+  </div>
+  <div class="col-md-6">
+    <label class="form-label">Apellido</label>
+    <input type="text" name="apellido" value="{{ old('apellido', $docente->usuario->apellido ?? '') }}" class="form-control" required>
+  </div>
+  <div class="col-md-6">
+    <label class="form-label">Correo institucional</label>
     <input type="email" name="correo" value="{{ old('correo', $docente->usuario->correo ?? '') }}" class="form-control" required>
-    <div class="form-text">Debe existir en la tabla usuarios y no estar asignado a otro docente.</div>
   </div>
   <div class="col-md-6">
     <label class="form-label">Código Docente</label>
@@ -35,3 +42,4 @@
   </div>
 </form>
 @endsection
+

@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\LogsBitacora;
 
 class Aula extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsBitacora;
 
     protected $table = 'aulas';
     protected $primaryKey = 'id_aula';
@@ -26,4 +27,3 @@ class Aula extends Model
         return $this->hasMany(Horario::class, 'id_aula', 'id_aula');
     }
 }
-

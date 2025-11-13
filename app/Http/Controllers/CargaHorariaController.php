@@ -12,11 +12,18 @@ use App\Models\Materia;
 use App\Models\Horario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
 
 class CargaHorariaController extends Controller
 {
     private array $dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
     private array $modalidades = ['PRESENCIAL','VIRTUAL','HIBRIDA'];
+
+    public function __construct()
+    {
+        // Normaliza acentos de días
+        $this->dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    }
 
     public function index(Request $request)
     {
@@ -97,6 +104,7 @@ class CargaHorariaController extends Controller
 
         $this->validateOverlap($data, $dmg->id_docente_materia_gestion);
 
+        try {
         Horario::create([
             'id_docente_materia_gestion' => $dmg->id_docente_materia_gestion,
             'id_grupo' => $grupo->id_grupo,
@@ -108,8 +116,16 @@ class CargaHorariaController extends Controller
             'virtual_plataforma' => $data['virtual_plataforma'] ?? null,
             'virtual_enlace' => $data['virtual_enlace'] ?? null,
             'observacion' => $data['observacion'] ?? null,
-            'estado' => 'PENDIENTE',
+            // Si la DMG está aprobada, el horario queda aprobado automáticamente
+            'estado' => 'APROBADA',
         ]);
+        } catch (QueryException $e) {
+            $code = (string) $e->getCode();
+            if ($code === '23P01' || $code === '23505') {
+                return back()->withErrors(['general' => 'No se pudo registrar la carga: conflicto de horario (docente/aula/grupo). Verifique solapamientos.'])->withInput();
+            }
+            throw $e;
+        }
 
         return redirect()->route('carga.index')->with('status','Carga horaria registrada.');
     }
@@ -153,6 +169,7 @@ class CargaHorariaController extends Controller
 
         $this->validateOverlap($data, $dmg->id_docente_materia_gestion, $cargum->id_horario);
 
+        try {
         $cargum->update([
             'id_docente_materia_gestion' => $dmg->id_docente_materia_gestion,
             'id_grupo' => $grupo->id_grupo,
@@ -164,7 +181,16 @@ class CargaHorariaController extends Controller
             'virtual_plataforma' => $data['virtual_plataforma'] ?? null,
             'virtual_enlace' => $data['virtual_enlace'] ?? null,
             'observacion' => $data['observacion'] ?? null,
+            // Mantener consistente: aprobado por defecto si DMG es aprobada
+            'estado' => 'APROBADA',
         ]);
+        } catch (QueryException $e) {
+            $code = (string) $e->getCode();
+            if ($code === '23P01' || $code === '23505') {
+                return back()->withErrors(['general' => 'No se pudo actualizar la carga: conflicto de horario (docente/aula/grupo). Verifique solapamientos.'])->withInput();
+            }
+            throw $e;
+        }
 
         return redirect()->route('carga.index')->with('status','Carga horaria actualizada.');
     }

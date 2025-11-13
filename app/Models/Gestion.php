@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\LogsBitacora;
 
 class Gestion extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsBitacora;
 
     protected $table = 'gestiones';
     protected $primaryKey = 'id_gestion';
@@ -21,4 +22,3 @@ class Gestion extends Model
         'activo',
     ];
 }
-

@@ -46,11 +46,13 @@
           <th style="width:120px">Código</th>
           <th>Profesión</th>
           <th style="width:160px">Grado Académico</th>
-          <th class="text-end" style="width:160px">Acciones</th>
+          <th style="width:120px">Estado</th>
+          <th class="text-end" style="width:200px">Acciones</th>
         </tr>
       </thead>
       <tbody>
         @foreach ($docentes as $d)
+        @php($activo = (bool)($d->usuario->activo ?? true))
         <tr>
           <td>{{ $docentes->firstItem() + $loop->index }}</td>
           <td>
@@ -75,6 +77,13 @@
               <span class="badge bg-light border text-success">{{ $d->grado_academico }}</span>
             @endif
           </td>
+          <td>
+            @if($activo)
+              <span class="badge bg-success">Activo</span>
+            @else
+              <span class="badge bg-secondary">Inactivo</span>
+            @endif
+          </td>
           <td class="text-end">
             <div class="dropdown">
               <button class="btn btn-light border dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -85,6 +94,23 @@
                   <a class="dropdown-item" href="{{ route('docentes.edit', $d) }}">
                     <i class="bi bi-pencil-square me-2"></i>Editar
                   </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ route('docentes.carga', $d) }}">
+                    <i class="bi bi-list-check me-2"></i>Ver carga
+                  </a>
+                </li>
+                <li>
+                  <form action="{{ route('docentes.toggle', $d) }}" method="POST">
+                    @csrf
+                    <button class="dropdown-item" type="submit">
+                      @if($activo)
+                        <i class="bi bi-toggle2-off me-2"></i>Desactivar
+                      @else
+                        <i class="bi bi-toggle2-on me-2"></i>Activar
+                      @endif
+                    </button>
+                  </form>
                 </li>
                 <li><hr class="dropdown-divider"></li>
                 <li>

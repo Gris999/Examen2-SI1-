@@ -7,7 +7,10 @@
     <h4 class="mb-0">Asistencias Docentes</h4>
     <small class="text-muted">Administra el registro de asistencias de los docentes</small>
   </div>
-  <a href="{{ route('asistencias.create') }}" class="btn btn-teal">Registrar Manual</a>
+  <div class="d-flex gap-2">
+    <a href="{{ route('historial.index') }}" class="btn btn-outline-secondary">Ver Historial</a>
+    <a href="{{ route('asistencias.create') }}" class="btn btn-teal">Registrar Manual</a>
+  </div>
 </div>
 
 <div class="card shadow-sm border-0 mb-3">
@@ -106,4 +109,3 @@
   <div>{{ $asistencias->links('vendor.pagination.teal') }}</div>
 @endif
 @endsection
-

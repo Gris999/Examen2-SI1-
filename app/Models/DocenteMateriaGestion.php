@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\LogsBitacora;
 
 class DocenteMateriaGestion extends Model
 {
+    use LogsBitacora;
     use HasFactory;
 
     protected $table = 'docente_materia_gestion';

@@ -35,6 +35,11 @@
         <button class="btn btn-teal" type="submit">Filtrar</button>
       </div>
     </form>
+    <div class="mt-2">
+      <a href="{{ route('aulas.disponibilidad', request()->only('dia','hora_inicio','hora_fin')) }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-eye me-1"></i> Ver disponibilidad
+      </a>
+    </div>
   </div>
 </div>
 
@@ -93,4 +98,3 @@
   </div>
 @endif
 @endsection
-

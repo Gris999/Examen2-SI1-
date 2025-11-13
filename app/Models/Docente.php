@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\LogsBitacora;
 
 class Docente extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsBitacora;
 
     protected $table = 'docentes';
     protected $primaryKey = 'id_docente';
@@ -25,4 +26,3 @@ class Docente extends Model
         return $this->belongsTo(Usuario::class, 'id_usuario', 'id_usuario');
     }
 }
-

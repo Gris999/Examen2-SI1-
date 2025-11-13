@@ -14,7 +14,7 @@
   @method('PUT')
   <div class="col-md-3">
     <label class="form-label">Código</label>
-    <input type="text" name="codigo" value="{{ old('codigo', $aula->codigo) }}" class="form-control" maxlength="50">
+    <input type="text" name="codigo" value="{{ old('codigo', $aula->codigo) }}" class="form-control" maxlength="50" required>
   </div>
   <div class="col-md-5">
     <label class="form-label">Nombre</label>
@@ -22,8 +22,8 @@
   </div>
   <div class="col-md-4">
     <label class="form-label">Tipo</label>
-    <select name="tipo" class="form-select">
-      <option value="">Sin especificar</option>
+    <select name="tipo" class="form-select" required>
+      <option value="">Seleccione...</option>
       @foreach($tipos as $t)
         <option value="{{ $t }}" @selected(old('tipo', $aula->tipo)===$t)>{{ ucfirst(mb_strtolower($t)) }}</option>
       @endforeach
@@ -31,7 +31,7 @@
   </div>
   <div class="col-md-3">
     <label class="form-label">Capacidad</label>
-    <input type="number" name="capacidad" value="{{ old('capacidad', $aula->capacidad) }}" class="form-control" min="1" placeholder="Requerida salvo VIRTUAL">
+    <input type="number" name="capacidad" value="{{ old('capacidad', $aula->capacidad) }}" class="form-control" min="1" required>
   </div>
   <div class="col-md-9">
     <label class="form-label">Ubicación</label>
@@ -43,4 +43,3 @@
   </div>
 </form>
 @endsection
-

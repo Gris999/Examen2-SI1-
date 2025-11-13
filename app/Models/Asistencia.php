@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\LogsBitacora;
 
 class Asistencia extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsBitacora;
 
     protected $table = 'asistencias';
     protected $primaryKey = 'id_asistencia';
@@ -40,4 +41,3 @@ class Asistencia extends Model
         return $this->belongsTo(Usuario::class, 'registrado_por', 'id_usuario');
     }
 }
-

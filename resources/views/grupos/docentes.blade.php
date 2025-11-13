@@ -40,6 +40,9 @@
     <div class="card">
       <div class="card-header">Agregar Docente</div>
       <div class="card-body">
+        @if(!empty($tieneAsignado) && $tieneAsignado)
+          <div class="alert alert-warning">Este grupo ya tiene un docente asignado. Debe quitarlo para asignar otro.</div>
+        @endif
         <form method="GET" class="mb-3">
           <div class="input-group">
             <input type="text" name="q" value="{{ $q }}" class="form-control" placeholder="Buscar por nombre o correo...">
@@ -55,12 +58,12 @@
               <div class="list-group-item d-flex justify-content-between align-items-center">
                 <div>
                   {{ $d->usuario->nombre ?? '' }} {{ $d->usuario->apellido ?? '' }}
-                  <small class="text-muted">— {{ $d->usuario->correo ?? '' }}</small>
+                  <small class="text-muted">- {{ $d->usuario->correo ?? '' }}</small>
                 </div>
                 <form method="POST" action="{{ route('grupos.docentes.add', $grupo) }}">
                   @csrf
                   <input type="hidden" name="id_docente" value="{{ $d->id_docente }}">
-                  <button class="btn btn-sm btn-primary">Asignar</button>
+                  <button class="btn btn-sm btn-primary" @if(!empty($tieneAsignado) && $tieneAsignado) disabled @endif>Asignar</button>
                 </form>
               </div>
             @endforeach
@@ -77,4 +80,3 @@
   La relación con el grupo se establece en el CU8 (Horarios), donde cada horario referencia al docente-materia-gestión y al grupo.
 </div>
 @endsection
-

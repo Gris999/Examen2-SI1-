@@ -15,21 +15,21 @@
       <label class="form-label">Correo</label>
       <div class="input-group">
         <span class="input-group-text">📧</span>
-        <input type="email" name="email" value="{{ old('email', $email) }}" class="form-control" required>
+        <input type="email" name="correo" value="{{ old('correo', $email) }}" class="form-control" required>
       </div>
     </div>
     <div class="mb-3">
       <label class="form-label">Nueva contraseña</label>
       <div class="input-group">
         <span class="input-group-text">🔒</span>
-        <input type="password" name="password" class="form-control" required>
+        <input type="password" name="contrasena" class="form-control" required>
       </div>
     </div>
     <div class="mb-3">
       <label class="form-label">Confirmar contraseña</label>
       <div class="input-group">
         <span class="input-group-text">🔒</span>
-        <input type="password" name="password_confirmation" class="form-control" required>
+        <input type="password" name="contrasena_confirmation" class="form-control" required>
       </div>
     </div>
     <button class="btn btn-teal w-100" type="submit">Actualizar contraseña</button>

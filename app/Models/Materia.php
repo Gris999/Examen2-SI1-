@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\LogsBitacora;
 
 class Materia extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsBitacora;
 
     protected $table = 'materias';
     protected $primaryKey = 'id_materia';
@@ -26,4 +27,3 @@ class Materia extends Model
         return $this->belongsTo(Carrera::class, 'id_carrera', 'id_carrera');
     }
 }
-

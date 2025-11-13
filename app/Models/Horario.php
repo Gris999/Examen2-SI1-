@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\LogsBitacora;
 
 class Horario extends Model
 {
+    use LogsBitacora;
     protected $table = 'horarios';
     protected $primaryKey = 'id_horario';
     public $timestamps = false;
@@ -39,3 +41,4 @@ class Horario extends Model
         return $this->belongsTo(Aula::class, 'id_aula', 'id_aula');
     }
 }
+

@@ -10,6 +10,12 @@ use Illuminate\Validation\Rule;
 
 class MateriaController extends Controller
 {
+    public function __construct()
+    {
+        // CU3: ADMIN puede CRUD; DECANO solo lectura (index)
+        $this->middleware('role:administrador,admin')->only(['create','store','edit','update','destroy']);
+        $this->middleware('role:administrador,admin,decano')->only(['index']);
+    }
     public function index(Request $request)
     {
         $q = trim((string) $request->get('q', ''));
@@ -57,10 +63,7 @@ class MateriaController extends Controller
         $data = $request->validate([
             'id_carrera' => ['required', 'integer', 'exists:carreras,id_carrera'],
             'nombre' => ['required', 'string', 'max:150'],
-            'codigo' => [
-                'nullable', 'string', 'max:40',
-                Rule::unique('materias', 'codigo')->where(fn($q) => $q->where('id_carrera', $request->id_carrera)),
-            ],
+            'codigo' => ['required', 'string', 'max:40', Rule::unique('materias', 'codigo')],
             'carga_horaria' => ['required', 'integer', 'min:1'],
             'descripcion' => ['nullable', 'string'],
         ]);
@@ -80,12 +83,7 @@ class MateriaController extends Controller
         $data = $request->validate([
             'id_carrera' => ['required', 'integer', 'exists:carreras,id_carrera'],
             'nombre' => ['required', 'string', 'max:150'],
-            'codigo' => [
-                'nullable', 'string', 'max:40',
-                Rule::unique('materias', 'codigo')
-                    ->ignore($materia->id_materia, 'id_materia')
-                    ->where(fn($q) => $q->where('id_carrera', $request->id_carrera)),
-            ],
+            'codigo' => ['required', 'string', 'max:40', Rule::unique('materias', 'codigo')->ignore($materia->id_materia, 'id_materia')],
             'carga_horaria' => ['required', 'integer', 'min:1'],
             'descripcion' => ['nullable', 'string'],
         ]);

@@ -29,7 +29,7 @@
   </div>
   <div class="col-md-4">
     <label class="form-label">Código</label>
-    <input type="text" name="codigo" value="{{ old('codigo', $materia->codigo) }}" class="form-control">
+    <input type="text" name="codigo" value="{{ old('codigo', $materia->codigo) }}" class="form-control" required>
   </div>
   <div class="col-md-4">
     <label class="form-label">Carga Horaria</label>
@@ -45,4 +45,3 @@
   </div>
 </form>
 @endsection
-

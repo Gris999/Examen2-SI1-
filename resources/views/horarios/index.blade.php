@@ -7,13 +7,16 @@
     <h4 class="mb-0">Horarios</h4>
     <small class="text-muted">Crea y administra horarios aprobados</small>
   </div>
-  <a href="{{ route('horarios.create') }}" class="btn btn-teal">Nuevo Horario</a>
+  <div class="d-flex gap-2">
+    <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#genAutoModal">Generar automáticos</button>
+    <a href="{{ route('horarios.create') }}" class="btn btn-teal">Nuevo Horario</a>
+  </div>
 </div>
 
 <!-- Botón de creación visible solo en pantallas pequeñas -->
 <div class="d-lg-none mb-2">
   <a href="{{ route('horarios.create') }}" class="btn btn-teal w-100"><i class="bi bi-plus-lg me-1"></i>Nuevo Horario</a>
-</div>
+ </div>
 
 <div class="card shadow-sm border-0 mb-3">
   <div class="card-body">
@@ -106,7 +109,9 @@
             <td>{{ $h->aula->nombre ?? '-' }}</td>
             <td>{{ $h->modalidad }}</td>
             <td class="text-end">
-              <a href="{{ route('asistencias.qr', $h) }}" class="btn btn-sm btn-outline-success me-1">QR</a>
+              @if(($h->estado ?? 'PENDIENTE') === 'APROBADA')
+                <a href="{{ route('asistencias.qr', $h) }}" class="btn btn-sm btn-outline-success me-1">QR</a>
+              @endif
               <a href="{{ route('horarios.edit', $h) }}" class="btn btn-sm btn-outline-primary">Editar</a>
               <form action="{{ route('horarios.destroy', $h) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Eliminar horario?');">
                 @csrf
@@ -121,5 +126,83 @@
   </div>
   <div>{{ $horarios->links('vendor.pagination.teal') }}</div>
 @endif
+
+<!-- Modal: Generar automáticos -->
+<div class="modal fade" id="genAutoModal" tabindex="-1" aria-labelledby="genAutoModalLbl" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="genAutoModalLbl">Generar horarios automáticos</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{{ route('horarios.generar') }}" onsubmit="return validarGenAuto(this);">
+        @csrf
+        @if(!empty($gestionId))
+          <input type="hidden" name="gestion_id" value="{{ $gestionId }}">
+        @endif
+        @if(!empty($docenteId))
+          <input type="hidden" name="docente_id" value="{{ $docenteId }}">
+        @endif
+        @if(!empty($materiaId))
+          <input type="hidden" name="materia_id" value="{{ $materiaId }}">
+        @endif
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <div class="alert alert-info py-2">
+                <div><strong>Resumen:</strong> asignaciones aprobadas según filtros: <b>{{ $aproCount ?? 0 }}</b></div>
+                <div>Grupos sin horario asociados: <b>{{ $toProcess ?? 0 }}</b></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Días a considerar</label>
+              <div class="row row-cols-2 g-2">
+                @foreach(['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'] as $d)
+                  <div class="col">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="dias[]" id="dia_{{ $d }}" value="{{ $d }}" checked>
+                      <label class="form-check-label" for="dia_{{ $d }}">{{ $d }}</label>
+                    </div>
+                  </div>
+                @endforeach
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Bloques horarios</label>
+              <div class="row row-cols-1 g-2">
+                @foreach(['08:00-10:00','10:00-12:00','14:00-16:00','16:00-18:00'] as $s)
+                  <div class="col">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="slots[]" id="slot_{{ str_replace(':','',str_replace('-','_',$s)) }}" value="{{ $s }}" checked>
+                      <label class="form-check-label" for="slot_{{ str_replace(':','',str_replace('-','_',$s)) }}">{{ $s }}</label>
+                    </div>
+                  </div>
+                @endforeach
+              </div>
+              <div class="form-text">Selecciona al menos un día y un bloque.</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-teal">Generar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+ </div>
+
+<script>
+  function validarGenAuto(form){
+    var dias = form.querySelectorAll('input[name="dias[]"]:checked');
+    var slots = form.querySelectorAll('input[name="slots[]"]:checked');
+    if (dias.length === 0 || slots.length === 0) {
+      alert('Selecciona al menos un día y un bloque horario.');
+      return false;
+    }
+    return true;
+  }
+</script>
+
 @endsection
 

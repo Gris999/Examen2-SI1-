@@ -14,7 +14,7 @@
       <label class="form-label">Correo electrónico</label>
       <div class="input-group">
         <span class="input-group-text">📧</span>
-        <input type="email" name="email" value="{{ old('email') }}" class="form-control" placeholder="tu.correo@institucion.edu" required>
+        <input type="email" name="correo" value="{{ old('correo', old('email')) }}" class="form-control" placeholder="tu.correo@ficct.edu.bo" pattern="^[^@\s]+@ficct\.edu\.bo$" title="Debe ser un correo @ficct.edu.bo" required>
       </div>
     </div>
     <button class="btn btn-teal w-100" type="submit">Enviar enlace</button>

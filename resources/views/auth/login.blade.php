@@ -14,14 +14,14 @@
       <label class="form-label">Correo electrónico</label>
       <div class="input-group">
         <span class="input-group-text">📧</span>
-        <input type="email" name="login" value="{{ old('login') }}" class="form-control" placeholder="tu.correo@institucion.edu" required autofocus>
+        <input type="email" name="correo" value="{{ old('correo', old('login')) }}" class="form-control" placeholder="tu.correo@ficct.edu.bo" pattern="^[^@\s]+@ficct\.edu\.bo$" title="Debe ser un correo @ficct.edu.bo" required autofocus>
       </div>
     </div>
     <div class="mb-3">
       <label class="form-label">Contraseña</label>
       <div class="input-group">
         <span class="input-group-text">🔒</span>
-        <input type="password" name="password" class="form-control" required>
+        <input type="password" name="contrasena" class="form-control" required>
       </div>
     </div>
     <div class="d-flex justify-content-between align-items-center mb-3">

@@ -5,16 +5,28 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
   <div>
     <h4 class="mb-0">Nuevo Docente</h4>
-    <small class="text-muted">Crea un registro de docente vinculado a un usuario</small>
+    <small class="text-muted">Crea un registro de docente y su usuario</small>
   </div>
 </div>
 
 <form method="POST" action="{{ route('docentes.store') }}" class="row g-3">
   @csrf
   <div class="col-md-6">
-    <label class="form-label">Correo del Usuario</label>
-    <input type="email" name="correo" value="{{ old('correo') }}" class="form-control" required>
-    <div class="form-text">Debe existir en la tabla usuarios y no estar asignado.</div>
+    <label class="form-label">Nombre</label>
+    <input type="text" name="nombre" value="{{ old('nombre') }}" class="form-control" required>
+  </div>
+  <div class="col-md-6">
+    <label class="form-label">Apellido</label>
+    <input type="text" name="apellido" value="{{ old('apellido') }}" class="form-control" required>
+  </div>
+  <div class="col-md-6">
+    <label class="form-label">Correo institucional</label>
+    <input type="email" name="correo" value="{{ old('correo') }}" class="form-control" placeholder="nombre.apellido@ficct.edu.bo" required>
+    <div class="form-text">Se creará un usuario activo y se asignará el rol DOCENTE.</div>
+  </div>
+  <div class="col-md-6">
+    <label class="form-label">Contraseña</label>
+    <input type="password" name="contrasena" class="form-control" minlength="6" required>
   </div>
   <div class="col-md-6">
     <label class="form-label">Código Docente</label>
@@ -34,3 +46,4 @@
   </div>
 </form>
 @endsection
+

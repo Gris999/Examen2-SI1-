@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\LogsBitacora;
 
 class Carrera extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsBitacora;
 
     protected $table = 'carreras';
     protected $primaryKey = 'id_carrera';
@@ -19,4 +20,3 @@ class Carrera extends Model
         'sigla',
     ];
 }
-

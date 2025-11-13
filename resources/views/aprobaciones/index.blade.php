@@ -7,7 +7,10 @@
     <h4 class="mb-0">Aprobaciones de Asignaciones (DMG)</h4>
     <small class="text-muted">Aprueba o rechaza asignaciones pendientes</small>
   </div>
-  <a href="{{ route('grupos.index') }}" class="btn btn-outline-secondary">Asignar (CU6)</a>
+  <div class="d-flex gap-2">
+    <a href="{{ route('aprobaciones.historial') }}" class="btn btn-outline-secondary">Ver historial</a>
+    <a href="{{ route('carga.index') }}" class="btn btn-outline-secondary">Ir a Carga (CU6)</a>
+  </div>
 </div>
 
 <div class="card shadow-sm border-0 mb-3">
@@ -17,6 +20,14 @@
         <select name="estado" class="form-select">
           @foreach(['PENDIENTE','APROBADA','RECHAZADA'] as $e)
             <option value="{{ $e }}" @selected(($estado ?? 'PENDIENTE')===$e)>{{ ucfirst(strtolower($e)) }}</option>
+          @endforeach
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select name="gestion_id" class="form-select">
+          <option value="">Todas las gestiones</option>
+          @foreach(($gestiones ?? []) as $g)
+            <option value="{{ $g->id_gestion }}" @selected(($gestion ?? null)==$g->id_gestion)>{{ $g->codigo }} @if($g->activo) (Activa) @endif</option>
           @endforeach
         </select>
       </div>
@@ -57,7 +68,9 @@
               <span class="badge bg-{{ $cls }}">{{ ucfirst(strtolower($a->estado ?? 'PENDIENTE')) }}</span>
             </td>
             <td class="text-end">
-              @if(($a->estado ?? 'PENDIENTE') === 'PENDIENTE')
+              @php($roles = auth()->user()->roles()->pluck('nombre')->map(fn($n)=>mb_strtolower($n))->toArray())
+              @php($puedeAprobar = in_array('administrador',$roles) || in_array('decano',$roles))
+              @if(($a->estado ?? 'PENDIENTE') === 'PENDIENTE' && $puedeAprobar)
                 <form action="{{ route('aprobaciones.approve', $a) }}" method="POST" class="d-inline">
                   @csrf
                   <button class="btn btn-sm btn-success">Aprobar</button>
@@ -78,4 +91,3 @@
   <div>{{ $asignaciones->links('vendor.pagination.teal') }}</div>
 @endif
 @endsection
-

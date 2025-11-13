@@ -107,7 +107,9 @@
               <span class="badge bg-{{ $cls }}">{{ ucfirst(strtolower($h->estado ?? 'PENDIENTE')) }}</span>
             </td>
             <td class="text-end">
-              <a href="{{ route('asistencias.qr', $h) }}" class="btn btn-sm btn-outline-success me-1">QR</a>
+              @if(($h->estado ?? 'PENDIENTE') === 'APROBADA')
+                <a href="{{ route('asistencias.qr', $h) }}" class="btn btn-sm btn-outline-success me-1">QR</a>
+              @endif
               <a href="{{ route('carga.edit', $h) }}" class="btn btn-sm btn-outline-primary">Editar</a>
               <form action="{{ route('carga.destroy', $h) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Eliminar asignación?');">
                 @csrf
@@ -123,4 +125,3 @@
   <div>{{ $horarios->links('vendor.pagination.teal') }}</div>
 @endif
 @endsection
-

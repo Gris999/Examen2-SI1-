@@ -15,6 +15,18 @@ use Illuminate\Validation\Rule;
 
 class GrupoController extends Controller
 {
+    public function __construct()
+    {
+        // CU4: Permisos
+        // - ADMIN y COORDINADOR pueden crear/editar/eliminar y asignar docentes
+        // - DECANO solo lectura (index y listado de docentes)
+        $this->middleware('role:administrador,admin,coordinador')->only([
+            'create','store','edit','update','destroy','addDocente','removeDocente'
+        ]);
+        $this->middleware('role:administrador,admin,coordinador,decano')->only([
+            'index','docentes'
+        ]);
+    }
     public function index(Request $request)
     {
         $q = trim((string) $request->get('q', ''));
@@ -133,6 +145,7 @@ class GrupoController extends Controller
             ->where('id_gestion', $grupo->id_gestion)
             ->orderBy('id_docente_materia_gestion','desc')
             ->get();
+        $tieneAsignado = $asignados->count() >= 1;
 
         $docentes = Docente::with('usuario')
             ->when($q !== '', function ($query) use ($q) {
@@ -146,7 +159,7 @@ class GrupoController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('grupos.docentes', compact('grupo','asignados','docentes','q'));
+        return view('grupos.docentes', compact('grupo','asignados','docentes','q','tieneAsignado'));
     }
 
     public function addDocente(Grupo $grupo, Request $request)
@@ -154,6 +167,14 @@ class GrupoController extends Controller
         $data = $request->validate([
             'id_docente' => ['required','integer','exists:docentes,id_docente'],
         ]);
+
+        // Solo 1 docente por grupo (materia+gestión del grupo)
+        $yaTiene = DocenteMateriaGestion::where('id_materia', $grupo->id_materia)
+            ->where('id_gestion', $grupo->id_gestion)
+            ->exists();
+        if ($yaTiene) {
+            return back()->withErrors(['general' => 'Este grupo ya tiene un docente asignado. Quite el docente antes de asignar otro.']);
+        }
 
         $exists = DocenteMateriaGestion::where('id_docente', $data['id_docente'])
             ->where('id_materia', $grupo->id_materia)
@@ -188,4 +209,3 @@ class GrupoController extends Controller
         return redirect()->route('grupos.docentes', $grupo)->with('status','Asignación eliminada.');
     }
 }
-
